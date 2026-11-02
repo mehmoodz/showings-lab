@@ -1,10 +1,10 @@
 import { displayDatabasePath, initDatabase } from "../src/lib/db"
 import { seedShowings } from "../src/lib/seed"
 
-const major = Number(process.versions.node.split(".")[0])
-if (!Number.isFinite(major) || major < 22) {
+const [major, minor] = process.versions.node.split(".").map(Number)
+if (!(major > 22 || (major === 22 && minor >= 13))) {
   console.error(
-    `Showings Lab requires Node.js 22 or newer. Current version: ${process.version}`,
+    `Showings Lab requires Node.js 22.13 or newer. Current version: ${process.version}`,
   )
   process.exit(1)
 }

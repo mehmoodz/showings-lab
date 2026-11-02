@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import Database from "better-sqlite3"
+import { Database, type DatabaseSync } from "./sqlite"
 import { isShowingStatus, type Showing } from "./primitives"
 import { seedShowings, validateSeedShowings } from "./seed"
 
@@ -24,7 +24,7 @@ CREATE INDEX IF NOT EXISTS showings_scheduled_at_idx
 
 type CachedDatabase = {
   path: string
-  db: Database.Database
+  db: DatabaseSync
 }
 
 const globalForDb = globalThis as typeof globalThis & {
@@ -86,12 +86,12 @@ export function listShowings(): Showing[] {
        FROM showings
        ORDER BY scheduled_at ASC, id ASC`,
     )
-    .all() as Showing[]
+    .all() as unknown as Showing[]
 
   return rows.map(toShowing)
 }
 
-function getDatabase(): Database.Database {
+function getDatabase(): DatabaseSync {
   const dbPath = resolveDatabasePath()
   if (globalForDb.showingsDb?.path === dbPath) return globalForDb.showingsDb.db
 
@@ -101,20 +101,20 @@ function getDatabase(): Database.Database {
   return db
 }
 
-function openDatabase(dbPath: string): Database.Database {
+function openDatabase(dbPath: string): DatabaseSync {
   // turbopackIgnore keeps Next from tracing the whole repo for this local file.
   fs.mkdirSync(/*turbopackIgnore: true*/ path.dirname(dbPath), {
     recursive: true,
   })
   const db = new Database(dbPath)
-  db.pragma("busy_timeout = 5000")
-  db.pragma("foreign_keys = ON")
+  db.exec("PRAGMA busy_timeout = 5000")
+  db.exec("PRAGMA foreign_keys = ON")
   db.exec(schema)
   seedIfEmpty(db)
   return db
 }
 
-function seedIfEmpty(db: Database.Database) {
+function seedIfEmpty(db: DatabaseSync) {
   validateSeedShowings(seedShowings)
 
   const count = db.prepare("SELECT COUNT(*) AS count FROM showings").get() as {
@@ -144,11 +144,14 @@ function seedIfEmpty(db: Database.Database) {
      )`,
   )
 
-  const insertAll = db.transaction((rows: readonly Showing[]) => {
-    for (const row of rows) insert.run(row)
-  })
-
-  insertAll(seedShowings)
+  db.exec("BEGIN")
+  try {
+    for (const row of seedShowings) insert.run(row)
+    db.exec("COMMIT")
+  } catch (error) {
+    db.exec("ROLLBACK")
+    throw error
+  }
 }
 
 function toShowing(row: Showing): Showing {

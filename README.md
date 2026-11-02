@@ -4,7 +4,7 @@ EasyOnes lab for a fullstack TypeScript interview. The app is Next.js and shadcn
 
 ## Setup
 
-Install [Node.js 22 or newer](https://nodejs.org). The commands are the same on macOS, Windows, and Linux:
+Install [Node.js 22.13 or newer](https://nodejs.org). The commands are the same on macOS, Windows, and Linux:
 
 ```bash
 npm install
@@ -49,4 +49,4 @@ npm test
 
 ## If install fails
 
-`better-sqlite3` ships prebuilt binaries for Node 22 and 24 on macOS, Windows, and Linux. Install Node 22 or newer from [nodejs.org](https://nodejs.org). You do not need Python, Visual Studio, or Xcode.
+The database uses SQLite built into Node.js (`node:sqlite`), so there is nothing native to compile. Check `node --version` is 22.13 or newer, and install a newer Node from [nodejs.org](https://nodejs.org) if not.
