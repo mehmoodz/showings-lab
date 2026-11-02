@@ -7,13 +7,13 @@ EasyOnes lab for a fullstack TypeScript interview. The app is Next.js and shadcn
 Install [Node.js 22.13 or newer](https://nodejs.org). The commands are the same on macOS, Windows, and Linux:
 
 ```bash
-npm install
+npm run setup
 npm run dev
 ```
 
 Open [http://127.0.0.1:3847](http://127.0.0.1:3847).
 
-`npm install` downloads dependencies and creates `data/showings.db` with sample showings. You should see one table of 12 showings. The list is not paginated.
+`npm run setup` checks your Node.js version, downloads dependencies, and creates `data/showings.db` with sample showings, printing each step. Plain `npm install` does the same without the step-by-step output. You should see one table of 12 showings. The list is not paginated.
 
 If port 3847 is already in use:
 

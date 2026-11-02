@@ -10,7 +10,9 @@
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 3847",
     "test": "tsx --test tests/showings.test.ts",
+    "setup": "node scripts/install.mjs",
     "postinstall": "tsx scripts/setup.ts",
+    "db:setup": "tsx scripts/setup.ts",
     "db:reset": "tsx scripts/reset.ts"
   },
   "dependencies": {
