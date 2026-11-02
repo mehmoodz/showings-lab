@@ -45,7 +45,6 @@ That deletes the local file and loads the sample showings again. Rows you added 
 
 ```bash
 npm test
-npm run lint
 ```
 
 ## If install fails
